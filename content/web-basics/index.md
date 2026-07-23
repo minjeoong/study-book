@@ -13,6 +13,10 @@ keywords:
   - 이벤트 위임
   - CRUD
 materials:
+  - file: slides-day1-html-css-js.pdf
+    title: "강의 슬라이드 Day1 — HTML, CSS, JavaScript"
+    type: slides
+    date: 2026-07-23
   - file: slides-day2-html-css-js-crud-guide.pdf
     title: 종합실습 가이드 — 중고차 목록 관리 CRUD (HTML, CSS 레이아웃, JavaScript)
     type: slides
