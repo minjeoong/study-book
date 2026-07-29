@@ -28,4 +28,16 @@ materials:
     title: "과제 제출 — 종합실습 2 (PostgreSQL JOIN)"
     type: etc
     date: 2026-07-28
+  - file: lab-day3-hr-db-setup.sql
+    title: "실습 — 종합실습 3 HR DB 환경설정 스크립트"
+    type: lab
+    date: 2026-07-29
+  - file: lab-day3-hr-db-setup-psql.sql
+    title: "실습 — 종합실습 3 HR DB 환경설정 스크립트 (psql용)"
+    type: lab
+    date: 2026-07-29
+  - file: submission-day3-hr-db.pdf
+    title: "과제 제출 — 종합실습 3 (HR DB)"
+    type: etc
+    date: 2026-07-29
 ---
