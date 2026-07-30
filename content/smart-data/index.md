@@ -40,4 +40,16 @@ materials:
     title: "과제 제출 — 종합실습 3 (HR DB)"
     type: etc
     date: 2026-07-29
+  - file: lab-day4-ecom-schema.sql
+    title: "실습 — 종합실습 4 이커머스 테이블 생성"
+    type: lab
+    date: 2026-07-30
+  - file: lab-day4-ecom-seed.sql
+    title: "실습 — 종합실습 4 이커머스 데이터 입력"
+    type: lab
+    date: 2026-07-30
+  - file: submission-day4-ecom.pdf
+    title: "과제 제출 — 종합실습 4 (이커머스 DB)"
+    type: etc
+    date: 2026-07-30
 ---
