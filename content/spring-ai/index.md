@@ -16,4 +16,16 @@ materials:
     title: "과제 제출 — Spring AI Day2"
     type: etc
     date: 2026-08-19
+  - file: submission-day3-spring-ai.pdf
+    title: "과제 제출 — Spring AI Day3"
+    type: etc
+    date: 2026-08-20
+  - file: submission-spring-ai-final.pdf
+    title: "과제 제출 — Spring AI 최종 보고서"
+    type: etc
+    date: 2026-08-20
+  - file: submission-spring-ai-final-code.zip
+    title: "과제 제출 — Spring AI 최종 프로젝트 코드"
+    type: lab
+    date: 2026-08-20
 ---
