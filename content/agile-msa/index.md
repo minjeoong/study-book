@@ -48,4 +48,16 @@ materials:
     title: "과제 제출 — blueberry-smoothie 팀 MSA 프로젝트"
     type: lab
     date: 2026-08-26
+  - file: submission-day2-team4-proposal.pdf
+    title: "과제 제출 — Day2 4조 기획서"
+    type: etc
+    date: 2026-08-27
+  - file: submission-day2-team4-presentation.pdf
+    title: "과제 제출 — Day2 4조 발표자료"
+    type: etc
+    date: 2026-08-27
+  - file: submission-day2-team4-code.zip
+    title: "과제 제출 — Day2 4조 프론트엔드 코드"
+    type: lab
+    date: 2026-08-27
 ---
