@@ -32,4 +32,36 @@ materials:
     title: "과제 제출 — sLLM Fine Tuning Day1"
     type: etc
     date: 2026-08-28
+  - file: subnote-day2.pdf
+    title: "실습 서브노트 Day2"
+    type: etc
+    date: 2026-08-31
+  - file: subnote-day2.html
+    title: "실습 서브노트 Day2 (HTML)"
+    type: etc
+    date: 2026-08-31
+  - file: demo-1-sft-only-aurora.jpg
+    title: "데모 캡처 1 — SFT 단독 비교 (AURORA)"
+    type: etc
+    date: 2026-08-31
+  - file: demo-2-rag-compare-aurora.jpg
+    title: "데모 캡처 2 — RAG 보강 비교 (AURORA)"
+    type: etc
+    date: 2026-08-31
+  - file: demo-3-rag-compare-score.jpg
+    title: "데모 캡처 3 — RAG 보강 비교 점수"
+    type: etc
+    date: 2026-08-31
+  - file: demo-4-rag-compare-blue-miss.jpg
+    title: "데모 캡처 4 — RAG 보강 비교 (BLUE 검색 실패)"
+    type: etc
+    date: 2026-08-31
+  - file: submission-day2-sllm-finetuning.pdf
+    title: "과제 제출 — sLLM Fine Tuning Day2"
+    type: etc
+    date: 2026-08-31
+  - file: submission-sllm-main-std.zip
+    title: "과제 제출 — sllm-main-std 코드 (모델 체크포인트 제외)"
+    type: lab
+    date: 2026-08-31
 ---
