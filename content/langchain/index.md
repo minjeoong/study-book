@@ -24,4 +24,8 @@ materials:
     title: "실습 데이터 — capital.yaml, fruit_color.yaml, test_data.txt"
     type: lab
     date: 2026-09-09
+  - file: lab-langchain-quiz.pdf
+    title: "퀴즈, 종합실습 — 생성형 AI 서비스 개발"
+    type: lab
+    date: 2026-09-10
 ---
