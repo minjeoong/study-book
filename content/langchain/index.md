@@ -28,4 +28,12 @@ materials:
     title: "퀴즈, 종합실습 — 생성형 AI 서비스 개발"
     type: lab
     date: 2026-09-10
+  - file: submission-team2-design.pdf
+    title: "과제 제출 — 2조 설계서 (최종)"
+    type: etc
+    date: 2026-09-11
+  - file: submission-team2-source.zip
+    title: "과제 제출 — 2조 개발 소스"
+    type: lab
+    date: 2026-09-11
 ---
