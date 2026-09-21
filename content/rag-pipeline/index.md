@@ -24,4 +24,8 @@ materials:
     title: "참고 자료 — SPRi AI Brief 2026년 8월호"
     type: etc
     date: 2026-09-18
+  - file: slides-rag-overview.pdf
+    title: "강의 자료 — RAG, Retrieval Augmented Generation"
+    type: slides
+    date: 2026-09-21
 ---
