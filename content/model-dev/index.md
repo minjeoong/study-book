@@ -20,4 +20,16 @@ materials:
     title: "실습 데이터 — 은행 고객 이탈 (신규)"
     type: etc
     date: 2026-09-28
+  - file: lab-model-dev-optimization.ipynb
+    title: "실습 — 모델 개발 및 최적화"
+    type: notebook
+    date: 2026-09-29
+  - file: submission-model-dev-final.ipynb
+    title: "과제 제출 — 종합실습 결과물 (노트북)"
+    type: notebook
+    date: 2026-09-29
+  - file: submission-model-dev-final.xlsx
+    title: "과제 제출 — 종합실습 결과물 (엑셀)"
+    type: etc
+    date: 2026-09-29
 ---
