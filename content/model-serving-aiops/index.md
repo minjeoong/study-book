@@ -28,4 +28,8 @@ materials:
     title: "강의 녹취 Day1"
     type: etc
     date: 2026-09-30
+  - file: transcript-day2.txt
+    title: "강의 녹취 Day2"
+    type: etc
+    date: 2026-10-01
 ---
