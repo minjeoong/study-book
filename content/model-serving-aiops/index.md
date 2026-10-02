@@ -32,4 +32,16 @@ materials:
     title: "강의 녹취 Day2"
     type: etc
     date: 2026-10-01
+  - file: submission-aiops-individual.pdf
+    title: "과제 제출 — AIOps 개인 과제"
+    type: etc
+    date: 2026-10-02
+  - file: submission-team2-etchguard-presentation.pdf
+    title: "과제 제출 — 2조 EtchGuard 발표장표"
+    type: etc
+    date: 2026-10-02
+  - file: submission-team2-etchguard-code.zip
+    title: "과제 제출 — 2조 EtchGuard 코드"
+    type: lab
+    date: 2026-10-02
 ---
