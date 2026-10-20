@@ -8,4 +8,8 @@ materials:
     title: "과제 제출 — 5조 미니 프로젝트 보고서"
     type: etc
     date: 2026-10-19
+  - file: submission-challenge.zip
+    title: "과제 제출 — 챌린지 (예측 결과, 학습 데이터, 최종 모델)"
+    type: lab
+    date: 2026-10-20
 ---
