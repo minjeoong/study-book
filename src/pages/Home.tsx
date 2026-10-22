@@ -232,7 +232,7 @@ export function Home({ onSearch }: { onSearch: () => void }) {
         </p>
         <button className="big-search" onClick={onSearch}>
           <Icon name="search" />
-          <span>무엇을 다시 볼까요? 개념, 질문, 과목 이름으로 찾기</span>
+          <span>무엇을 다시 볼까요? 개념·질문·과목 찾기</span>
           <span className="kbd">Ctrl K</span>
         </button>
       </header>
