@@ -18,8 +18,8 @@ concurrency:
 
 jobs:
   build:
-    # 기본 브랜치(지금은 작업 브랜치, 나중에 main)만 배포한다
-    if: github.ref_name == github.event.repository.default_branch
+    # 기본 브랜치(지금은 작업 브랜치, 나중에 main)만, 저장소가 공개일 때만 배포한다
+    if: github.ref_name == github.event.repository.default_branch && !github.event.repository.private
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
