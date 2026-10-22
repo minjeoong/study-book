@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { COURSES } from '../data/schedule'
 import { ALL_QA, conceptHref, courseHref } from '../lib/content'
-import { Inline, QAItem } from '../components/Bits'
+import { Code, Inline, QAItem } from '../components/Bits'
 import { Icon } from '../components/Icon'
 
 const KNOWN_KEY = 'skala-notes:known'
@@ -58,10 +58,10 @@ export function InterviewPage({ initialCourse }: { initialCourse?: string }) {
   const knownInView = filtered.filter((x) => known.has(x.key)).length
 
   return (
-    <div className="page">
-      <h1 className="page-title">면접 질문</h1>
-      <p className="page-sub num">
-        수업 노트에서 뽑은 질문 <b>{ALL_QA.length}개</b>. 답을 먼저 소리 내어 말해 보고 확인하세요. 안다고 표시한 질문 {known.size}개.
+    <>
+      <h1 className="title">면접 질문</h1>
+      <p className="lede num">
+        수업 노트에서 뽑은 질문 {ALL_QA.length}개. 승차권 한 장에 질문 하나, 답을 먼저 소리 내어 말해 보고 확인하세요. 지금까지 안다고 표시한 질문은 {known.size}개예요.
       </p>
 
       <div className="toolbar">
@@ -105,41 +105,38 @@ export function InterviewPage({ initialCourse }: { initialCourse?: string }) {
           {level === 'unknown' ? '이 범위의 질문은 모두 안다고 표시했어요.' : '이 조건에 맞는 질문이 없어요.'}
         </p>
       ) : mode === 'cards' ? (
-        <div className="grid12 drill">
-          <div className="span-8">
+        <div className="drill">
+          <div>
             <Flashcards items={filtered} known={known} onKnown={toggleKnown} />
           </div>
-          <aside className="span-4 panel" aria-labelledby="prog-title">
-            <div className="panel__head">
-              <h2 className="panel__title" id="prog-title">
-                과목별로 안다고 한 질문
-              </h2>
-            </div>
-            <div className="progress-list">
+          <aside aria-labelledby="prog-title">
+            <h2 className="side-block__title" id="prog-title">
+              역별로 안다고 한 질문
+            </h2>
+            <ol className="progress">
               {coursesWithQA.map((c) => {
                 const all = ALL_QA.filter((x) => x.concept.course === c.id)
                 const k = all.filter((x) => known.has(x.key)).length
                 return (
-                  <div key={c.id} className="progress-row" data-track={c.track} aria-current={course === c.id}>
-                    <button style={{ textAlign: 'left' }} onClick={() => setCourse(c.id)}>
-                      {c.title}
-                    </button>
+                  <li key={c.id} aria-current={course === c.id}>
+                    <Code course={c} />
+                    <button onClick={() => setCourse(c.id)}>{c.title}</button>
                     <span className="num">
                       {k} / {all.length}
                     </span>
-                    <div className="bar" aria-hidden="true">
+                    <span className="bar" aria-hidden="true">
                       <i style={{ transform: `scaleX(${all.length ? k / all.length : 0})` }} />
-                    </div>
-                  </div>
+                    </span>
+                  </li>
                 )
               })}
-            </div>
+            </ol>
           </aside>
         </div>
       ) : (
         <QAList items={filtered} known={known} />
       )}
-    </div>
+    </>
   )
 }
 
@@ -202,39 +199,43 @@ function Flashcards({ items, known, onKnown }: { items: Item[]; known: Set<strin
   }
 
   return (
-    <div className="flash">
-      <div className="flash__bar" aria-hidden="true">
+    <div>
+      <div className="drill__bar" aria-hidden="true">
         <i style={{ transform: `scaleX(${(pos + 1) / items.length})` }} />
       </div>
-      <div className="flash__card">
-        <p className="flash__meta">
-          <a href={courseHref(item.concept.course)}>{course?.title}</a>
-          <span>·</span>
-          <a href={conceptHref(item.concept)}>{item.concept.title}</a>
-          {isKnown && <span className="mark-known">안다고 표시함</span>}
-        </p>
-        <p className="flash__q">
-          <Inline text={item.qa.q} />
-        </p>
-        {flipped ? (
-          <p className="flash__a">
-            <Inline text={item.qa.a} />
+      <article className="ticket">
+        <div className="ticket__stub">
+          {course && <Code course={course} />}
+          <span className="fig num">{String(pos + 1).padStart(3, '0')}</span>
+          {isKnown && <span className="known">안다고 표시함</span>}
+        </div>
+        <div className="ticket__main">
+          <p className="ticket__where">
+            <a href={conceptHref(item.concept)}>{item.concept.title}</a> · <a href={courseHref(item.concept.course)}>{course?.title}</a>
           </p>
-        ) : (
-          <p className="flash__hint">30초 동안 소리 내어 답해 본 다음 답을 확인하세요. 스페이스 바로도 뒤집을 수 있어요.</p>
-        )}
-      </div>
-      <div className="flash__nav">
+          <p className="ticket__q">
+            <Inline text={item.qa.q} />
+          </p>
+          {flipped ? (
+            <p className="ticket__a">
+              <Inline text={item.qa.a} />
+            </p>
+          ) : (
+            <p className="ticket__hint">30초 동안 소리 내어 답해 본 다음 확인하세요. 스페이스 바로도 뒤집을 수 있어요.</p>
+          )}
+        </div>
+      </article>
+      <div className="drill__nav">
         {!flipped ? (
-          <button className="btn btn--primary" onClick={() => setFlipped(true)}>
+          <button className="btn btn--go" onClick={() => setFlipped(true)}>
             답 확인
           </button>
         ) : (
           <>
-            <button className="btn btn--primary" onClick={() => answer(true)}>
+            <button className="btn btn--go" onClick={() => answer(true)}>
               알고 있었어요
             </button>
-            <button className="btn btn--ghost" onClick={() => answer(false)}>
+            <button className="btn btn--line" onClick={() => answer(false)}>
               다시 볼게요
             </button>
           </>
@@ -248,7 +249,7 @@ function Flashcards({ items, known, onKnown }: { items: Item[]; known: Set<strin
         <button className="icon-btn" onClick={shuffle} aria-label="순서 섞기" title="순서 섞기">
           <Icon name="shuffle" />
         </button>
-        <span className="flash__progress num">
+        <span className="drill__pos num">
           {pos + 1} / {items.length}
         </span>
       </div>
@@ -265,10 +266,11 @@ function QAList({ items, known }: { items: Item[]; known: Set<string> }) {
       {groups.map((g) => (
         <section key={g.course.id} className="qa-group">
           <div className="qa-group__head">
+            <Code course={g.course} />
             <a href={courseHref(g.course.id)}>{g.course.title}</a>
             <span className="num">{g.items.length}개</span>
           </div>
-          <div className="qa-list">
+          <div>
             {g.items.map((x) => (
               <QAItem
                 key={x.key}
@@ -276,7 +278,7 @@ function QAList({ items, known }: { items: Item[]; known: Set<string> }) {
                 context={
                   <>
                     <a href={conceptHref(x.concept)}>{x.concept.title}</a>
-                    {known.has(x.key) && <span className="mark-known"> · 안다고 표시함</span>}
+                    {known.has(x.key) && <span className="known"> · 안다고 표시함</span>}
                   </>
                 }
               />

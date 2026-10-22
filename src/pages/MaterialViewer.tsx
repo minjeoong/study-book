@@ -4,8 +4,7 @@ import { courseById, courseHref, noteOf, type Material } from '../lib/content'
 import { loadScript } from '../lib/loadScript'
 import { renderMarkdown } from '../lib/markdown'
 import { md } from '../lib/dates'
-import { MAT_LABEL } from '../components/Bits'
-import { Icon } from '../components/Icon'
+import { Code, MAT_LABEL } from '../components/Bits'
 import { NotFound } from './NotFound'
 
 const REPO_BLOB = 'https://github.com/minjeoong/study-book/blob/HEAD/public/'
@@ -21,24 +20,31 @@ export function MaterialViewer({ course: courseId, file, page }: { course: strin
   const others = note!.materials.filter((m) => m !== mat)
 
   return (
-    <div className="page page--wide">
+    <>
       <nav className="crumbs" aria-label="위치">
         <a href="#/materials">자료실</a>
-        <Icon name="chevron" />
+        <span className="sep">/</span>
+        <Code course={course} />
         <a href={courseHref(course.id)}>{course.title}</a>
       </nav>
       <header className="viewer-head">
         <div>
-          <h1 className="page-title viewer-title">{mat.title}</h1>
-          <p className="page-sub num">
-            {MAT_LABEL[mat.type] ?? '자료'} · {mat.date ? `${md(mat.date)} 수업` : course.title} · {file}
+          <h1 className="title title--md">{mat.title}</h1>
+          <p className="meta num">
+            <span>
+              <b>{MAT_LABEL[mat.type] ?? '자료'}</b>
+            </span>
+            {mat.date && (
+              <span>
+                <b>{md(mat.date)}</b> 수업
+              </span>
+            )}
+            <span>{file}</span>
           </p>
         </div>
-        <div className="viewer-actions">
-          <a className="btn btn--ghost" href={REPO_BLOB + mat.url} target="_blank" rel="noreferrer">
-            GitHub에서 원본 보기
-          </a>
-        </div>
+        <a className="btn btn--line btn--sm" href={REPO_BLOB + mat.url} target="_blank" rel="noreferrer">
+          GitHub에서 원본 보기
+        </a>
       </header>
 
       {ext === 'ipynb' && <NotebookView m={mat} />}
@@ -46,20 +52,22 @@ export function MaterialViewer({ course: courseId, file, page }: { course: strin
       {ext === 'zip' && <ZipView m={mat} />}
 
       {others.length > 0 && (
-        <section className="section" aria-labelledby="other-mats">
-          <h2 className="section__title" id="other-mats">
-            이 과목의 다른 자료
-          </h2>
-          <div className="chips">
+        <section className="sec" aria-labelledby="other-mats">
+          <div className="sec__head">
+            <h2 className="sec__title" id="other-mats">
+              이 역의 다른 자료
+            </h2>
+          </div>
+          <div className="tags">
             {others.map((o) => (
-              <a key={o.file} className="chip pressable" href={materialHref(o)}>
+              <a key={o.file} className="tag" href={materialHref(o)}>
                 {o.title}
               </a>
             ))}
           </div>
         </section>
       )}
-    </div>
+    </>
   )
 }
 
@@ -88,11 +96,11 @@ function useFetch<T>(url: string, as: 'json' | 'blob') {
 
 function LoadError({ m, what }: { m: Material; what: string }) {
   return (
-    <div className="pending" role="alert">
+    <div className="notice" role="alert">
       <h2>{what}을 불러오지 못했어요</h2>
       <p>
         이 화면에서 파일을 읽지 못했어요. GitHub 저장소에 원본이 그대로 있으니{' '}
-        <a href={REPO_BLOB + m.url} target="_blank" rel="noreferrer" style={{ textDecoration: 'underline', textUnderlineOffset: 3 }}>
+        <a className="source__link" href={REPO_BLOB + m.url} target="_blank" rel="noreferrer">
           GitHub에서 열어 보세요
         </a>
         .
@@ -370,8 +378,10 @@ function ZipView({ m }: { m: Material }) {
         const lang = ZIP_LANG[ext] ?? ext
         const html = hljs.getLanguage(lang) ? hljs.highlight(f.text, { language: lang }).value : escapeHtml(f.text)
         return (
-          <section key={f.name} className="section" style={{ marginTop: 28 }}>
-            <h2 className="section__title">{f.name}</h2>
+          <section key={f.name} className="sec" style={{ marginTop: 36 }}>
+            <div className="sec__head">
+              <h2 className="sec__title">{f.name}</h2>
+            </div>
             <div className="code">
               <pre>
                 <code className="hljs" dangerouslySetInnerHTML={{ __html: html }} />
