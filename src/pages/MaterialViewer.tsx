@@ -47,6 +47,9 @@ export function MaterialViewer({ course: courseId, file, page }: { course: strin
       {ext === 'ipynb' && <NotebookView m={mat} />}
       {ext === 'pdf' && <PdfView m={mat} startPage={page} />}
       {ext === 'zip' && <ZipView m={mat} />}
+      {ext && TEXT_EXT.includes(ext) && <TextView m={mat} ext={ext} />}
+      {ext && IMAGE_EXT.includes(ext) && <img className="viewer-img" src={mat.url} alt={mat.title} />}
+      {ext && OFFICE_EXT.includes(ext) && <OfficeView m={mat} ext={ext} />}
 
       {others.length > 0 && (
         <section className="sec" aria-labelledby="other-mats">
@@ -388,5 +391,64 @@ function ZipView({ m }: { m: Material }) {
         )
       })}
     </div>
+  )
+}
+
+/* ---------- 코드·텍스트 · Office 문서 ---------- */
+
+const TEXT_EXT = ['sql', 'py', 'txt', 'csv', 'html', 'md', 'json', 'yaml', 'yml', 'java', 'js', 'ts', 'sh']
+const IMAGE_EXT = ['jpg', 'jpeg', 'png', 'gif', 'webp']
+const OFFICE_EXT = ['docx', 'pptx', 'xlsx']
+const TEXT_LANG: Record<string, string> = { py: 'python', html: 'xml', yml: 'yaml', js: 'javascript', ts: 'typescript', sh: 'bash' }
+
+function TextView({ m, ext }: { m: Material; ext: string }) {
+  const [text, setText] = useState<string>()
+  const [error, setError] = useState(false)
+  useEffect(() => {
+    let alive = true
+    fetch(m.url)
+      .then((r) => {
+        if (!r.ok) throw new Error(String(r.status))
+        return r.text()
+      })
+      .then((t) => alive && setText(t))
+      .catch(() => alive && setError(true))
+    return () => {
+      alive = false
+    }
+  }, [m.url])
+  const html = useMemo(() => {
+    if (text == null) return ''
+    const lang = TEXT_LANG[ext] ?? ext
+    return hljs.getLanguage(lang) ? hljs.highlight(text, { language: lang }).value : escapeHtml(text)
+  }, [text, ext])
+  if (error) return <LoadError m={m} what="파일" />
+  if (text == null) return <p className="viewer-loading">파일을 여는 중…</p>
+  return (
+    <div className="code">
+      <span className="code__lang">{ext}</span>
+      <pre>
+        <code className="hljs" dangerouslySetInnerHTML={{ __html: html }} />
+      </pre>
+    </div>
+  )
+}
+
+const OFFICE_NAME: Record<string, string> = { docx: 'Word 문서', pptx: 'PowerPoint 슬라이드', xlsx: 'Excel 시트' }
+
+function OfficeView({ m, ext }: { m: Material; ext: string }) {
+  return (
+    <section className="notice">
+      <h2>{OFFICE_NAME[ext] ?? '이 파일'}은 브라우저에서 바로 열 수 없어요</h2>
+      <p>내려받아서 열거나, GitHub에서 원본을 확인하세요.</p>
+      <p className="tags" style={{ marginTop: 16 }}>
+        <a className="btn btn--go btn--sm" href={m.url} download={m.file}>
+          파일 내려받기
+        </a>
+        <a className="btn btn--line btn--sm" href={REPO_BLOB + m.url} target="_blank" rel="noreferrer">
+          GitHub에서 보기
+        </a>
+      </p>
+    </section>
   )
 }

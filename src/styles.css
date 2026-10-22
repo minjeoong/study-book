@@ -911,6 +911,7 @@ a.wk:hover { background: var(--paper-2); }
 
 .viewer-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; margin-bottom: 28px; }
 .viewer-loading { padding: 40px 0; color: var(--grey); }
+.viewer-img { display: block; max-width: 100%; height: auto; box-shadow: inset 0 0 0 1px var(--rule); }
 .nb { display: flex; flex-direction: column; gap: 14px; }
 .nb-cell { min-width: 0; }
 .nb-cell--code { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 8px; }
