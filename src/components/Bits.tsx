@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react'
 import type { Course } from '../data/schedule'
-import { TRACKS } from '../data/schedule'
 import { renderInline, renderMarkdown } from '../lib/markdown'
-import type { Material, MaterialType, QA } from '../lib/content'
-import { md } from '../lib/dates'
+import { hasNotes, type Material, type MaterialType, type QA } from '../lib/content'
+import { courseStatus, md, todayISO, type CourseStatus } from '../lib/dates'
+import { LINE_NAME, stationCode } from '../lib/stations'
 import { Icon, type IconName } from './Icon'
 
 export function Markdown({ source, className = 'prose' }: { source: string; className?: string }) {
@@ -16,6 +16,37 @@ export function Inline({ text }: { text: string }) {
   return <span dangerouslySetInnerHTML={{ __html: html }} />
 }
 
+/** 상태 표식: ● 지남 · ◉ 운행 중 · ○ 예정 */
+export type Mark = 'done' | 'today' | 'next'
+export function markOf(s: CourseStatus): Mark {
+  return s === 'today' ? 'today' : s === 'done' || s === 'ongoing' ? 'done' : 'next'
+}
+export const MARK_LABEL: Record<Mark, string> = { done: '지남', today: '운행 중', next: '예정' }
+
+export function StatusMark({ s, label = false }: { s: Mark; label?: boolean }) {
+  return (
+    <>
+      <i className="mark" data-s={s} aria-hidden={label ? true : undefined} title={MARK_LABEL[s]} />
+      {label ? MARK_LABEL[s] : <span className="sr-only">{MARK_LABEL[s]}</span>}
+    </>
+  )
+}
+
+/** 역 코드 배지: 노선 문자 + 번호 (A02) */
+export function Code({ course, size }: { course: Course; size?: 'lg' }) {
+  const status = courseStatus(course, todayISO())
+  return (
+    <span
+      className={size === 'lg' ? 'stn stn--lg' : 'stn'}
+      data-state={status === 'today' ? 'today' : undefined}
+      data-empty={!hasNotes(course.id) && status !== 'today' ? true : undefined}
+      title={`${LINE_NAME[course.track]} ${stationCode(course.id)}`}
+    >
+      {stationCode(course.id)}
+    </span>
+  )
+}
+
 export function Importance({ level }: { level: 1 | 2 | 3 }) {
   const label = ['', '참고', '알아두기', '자주 나옴'][level]
   return (
@@ -23,15 +54,6 @@ export function Importance({ level }: { level: 1 | 2 | 3 }) {
       <i />
       <i />
       <i />
-    </span>
-  )
-}
-
-export function TrackChip({ course }: { course: Course }) {
-  const t = TRACKS.find((x) => x.id === course.track)
-  return (
-    <span className="chip chip--track" data-track={course.track}>
-      {t?.name}
     </span>
   )
 }
@@ -51,11 +73,11 @@ export function QAItem({
   return (
     <div className="qa" data-open={open}>
       <button className="qa__q" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-        <span className="qa__badge">Q{index != null ? index + 1 : ''}</span>
+        <span className="qa__no">Q{index != null ? index + 1 : ''}</span>
         <span>
           <Inline text={qa.q} />
         </span>
-        <span className="qa__toggle">{open ? '답 접기' : '답 보기'}</span>
+        <span className="qa__toggle">{open ? '접기' : '답 보기'}</span>
       </button>
       <div className="qa__a">
         <div>
@@ -75,14 +97,11 @@ export const MAT_LABEL: Record<MaterialType, string> = { slides: '슬라이드',
 export function MaterialLink({ m }: { m: Material }) {
   const ext = m.file.split('.').pop()?.toUpperCase()
   return (
-    <a className="mat" href={`#/m/${m.course}/${encodeURIComponent(m.file)}`}>
-      <span className="mat__icon">
-        <Icon name={MAT_ICON[m.type] ?? 'file'} />
-      </span>
+    <a href={`#/m/${m.course}/${encodeURIComponent(m.file)}`}>
+      <Icon name={MAT_ICON[m.type] ?? 'file'} />
       <span>
-        <span className="mat__title">{m.title}</span>
-        <br />
-        <span className="mat__meta num">
+        <span className="mats__t">{m.title}</span>
+        <span className="mats__m num">
           {MAT_LABEL[m.type] ?? '자료'} · {ext}
           {m.date ? ` · ${md(m.date)}` : ''}
         </span>

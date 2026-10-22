@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { COURSES, TRACKS } from '../data/schedule'
+import { COURSES } from '../data/schedule'
 import { go } from '../lib/router'
 import { search, type HitKind } from '../lib/search'
+import { Code } from './Bits'
 import { Icon } from './Icon'
 
-const GROUP: Record<HitKind, string> = { concept: '개념', course: '과목', question: '면접 질문' }
+const GROUP: Record<HitKind, string> = { concept: '개념', course: '역 (과목)', question: '면접 질문' }
 const SUGGEST = ['어텐션', '표준편차', 'Few-shot', '이벤트 위임', 'p-value', 'RLHF']
 
 function highlight(text: string, q: string) {
@@ -22,7 +23,7 @@ function highlight(text: string, q: string) {
 }
 
 // 키보드로 하루에도 수십 번 여는 창이라 열고 닫을 때 애니메이션을 넣지 않는다
-export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function SearchDialog({ open, initial = '', onClose }: { open: boolean; initial?: string; onClose: () => void }) {
   const [q, setQ] = useState('')
   const [sel, setSel] = useState(0)
   const input = useRef<HTMLInputElement>(null)
@@ -31,10 +32,11 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
 
   useEffect(() => {
     if (open) {
+      setQ(initial)
       setSel(0)
       requestAnimationFrame(() => input.current?.select())
     }
-  }, [open])
+  }, [open, initial])
 
   useEffect(() => setSel(0), [q])
 
@@ -66,7 +68,7 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
 
   return (
     <div className="dialog-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="dialog" role="dialog" aria-modal="true" aria-label="검색" onKeyDown={onKey}>
+      <div className="dialog" role="dialog" aria-modal="true" aria-label="역·개념·질문 찾기" onKeyDown={onKey}>
         <label className="dialog__input">
           <Icon name="search" />
           <span className="sr-only">개념, 과목, 면접 질문 검색</span>
@@ -74,7 +76,7 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
             ref={input}
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="개념, 과목, 면접 질문 검색 (초성도 돼요: ㅇㅌㅅ)"
+            placeholder="개념·과목·질문 (초성도 돼요: ㅇㅌㅅ)"
             autoComplete="off"
             spellCheck={false}
             role="combobox"
@@ -82,7 +84,7 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
             aria-controls="search-results"
             aria-activedescendant={hits[sel] ? `hit-${sel}` : undefined}
           />
-          <button className="icon-btn" onClick={onClose} aria-label="닫기">
+          <button className="mast__icon" onClick={onClose} aria-label="닫기">
             <Icon name="close" />
           </button>
         </label>
@@ -90,9 +92,9 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
           {!q.trim() && (
             <div className="dialog__empty">
               <p>찾고 싶은 개념을 입력하세요. 과목 이름, 영어 표기, 초성으로도 찾을 수 있어요.</p>
-              <div className="chips" style={{ marginTop: 14 }}>
+              <div className="tags" style={{ marginTop: 14 }}>
                 {SUGGEST.map((s) => (
-                  <button key={s} className="chip pressable" onClick={() => setQ(s)}>
+                  <button key={s} className="tag" onClick={() => setQ(s)}>
                     {s}
                   </button>
                 ))}
@@ -101,14 +103,11 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
           )}
           {q.trim() && hits.length === 0 && (
             <div className="dialog__empty">
-              <p>
-                ‘{q}’에 맞는 노트가 없어요. 아직 자료가 올라오지 않은 과목일 수 있어요.
-              </p>
+              <p>‘{q}’에 맞는 노트가 없어요. 아직 자료가 올라오지 않은 과목일 수 있어요.</p>
             </div>
           )}
           {hits.map((h, i) => {
             const course = COURSES.find((c) => c.id === h.item.courseId)
-            const track = TRACKS.find((t) => t.id === course?.track)
             const header = h.item.kind !== lastKind ? GROUP[h.item.kind] : null
             lastKind = h.item.kind
             return (
@@ -127,13 +126,9 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
                     choose(h.item.href)
                   }}
                 >
+                  {course && <Code course={course} />}
                   <span className="hit__title">{highlight(h.item.title, q)}</span>
-                  <span className="hit__sub">{h.item.sub}</span>
-                  {course && h.item.kind !== 'course' && (
-                    <span className="hit__course chip chip--track" data-track={course.track} title={track?.name}>
-                      {course.title.length > 14 ? course.title.slice(0, 13) + '…' : course.title}
-                    </span>
-                  )}
+                  <span className="hit__sub">{h.item.kind === 'course' ? h.item.sub : `${course?.title} · ${h.item.sub}`}</span>
                 </a>
               </div>
             )
