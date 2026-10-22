@@ -84,7 +84,7 @@ function renderCompare(text: string): string {
   const trs = rows
     .map(
       ([label, ...vals]) =>
-        `<tr><th scope="row">${inline(label ?? '')}</th>${vals.map((v) => `<td>${inline(v)}</td>`).join('')}</tr>`,
+        `<tr><th scope="row">${inline(label ?? '')}</th>${vals.map((v, i) => `<td data-col="${esc(head[i] ?? '')}">${inline(v)}</td>`).join('')}</tr>`,
     )
     .join('')
   return `<figure class="v-block v-compare" style="--cols:${head.length}"><div class="v-compare__scroll"><table><thead>${th}</thead><tbody>${trs}</tbody></table></div></figure>`

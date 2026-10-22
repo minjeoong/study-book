@@ -19,6 +19,7 @@
   --on-signal: #ffffff;
   --band: #111111;
   --on-band: #ffffff;
+  --signal-on-band: #ff5b52;
   --selection: #ffd9d6;
 
   /* Pretendard 에 없는 수학 기호(−, ≈ 등)는 Archivo 가 채운다 */
@@ -49,8 +50,8 @@
     --signal: #e8342b;
     --signal-ink: #ff6a60;
     --on-signal: #ffffff;
-    --band: #f2f2ee;
-    --on-band: #0f0f0f;
+    --band: #000000;
+    --on-band: #f2f2ee;
     --selection: #5a1a17;
     color-scheme: dark;
   }
@@ -67,8 +68,8 @@
   --signal: #e8342b;
   --signal-ink: #ff6a60;
   --on-signal: #ffffff;
-  --band: #f2f2ee;
-  --on-band: #0f0f0f;
+  --band: #000000;
+  --on-band: #f2f2ee;
   --selection: #5a1a17;
   color-scheme: dark;
 }
@@ -201,7 +202,10 @@ input, select { font: inherit; color: inherit; }
   font-size: 18px;
 }
 .brand__name { font-weight: 700; font-size: 17px; letter-spacing: -0.01em; white-space: nowrap; }
-.mast__nav { display: flex; gap: 2px; margin-left: 8px; }
+.mast__run { display: flex; align-items: center; gap: 12px; padding-left: 16px; margin-left: -12px; box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.45); white-space: nowrap; }
+.mast__run .fig { font-size: 17px; font-weight: 700; }
+.mast__live { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 700; }
+.mast__nav { display: flex; gap: 2px; margin-left: 4px; }
 .mast__nav a {
   height: var(--mast);
   display: flex;
@@ -237,7 +241,7 @@ input, select { font: inherit; color: inherit; }
 .mast__icon svg { width: 20px; height: 20px; }
 .mast__menu, .mast__search-icon { display: none; }
 
-.service { background: var(--band); color: var(--on-band); }
+.service { background: var(--band); color: var(--on-band); border-bottom: 1px solid var(--rule); }
 .service__in {
   max-width: calc(var(--wrap) + 40px);
   margin: 0 auto;
@@ -249,10 +253,7 @@ input, select { font: inherit; color: inherit; }
   gap: 4px 18px;
   font-size: 14px;
 }
-.service__live { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; color: var(--signal-ink); }
-:root:not([data-theme='dark']) .service__live { color: #ff5b52; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .service__live { color: var(--signal); } }
-:root[data-theme='dark'] .service__live { color: var(--signal); }
+.service__live { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; color: var(--signal-on-band); }
 .service a { display: inline-flex; align-items: center; gap: 8px; }
 .service a:hover .service__name { text-decoration: underline; text-underline-offset: 3px; }
 .service .stn { background: var(--on-band); color: var(--band); }
@@ -293,7 +294,6 @@ input, select { font: inherit; color: inherit; }
   overflow-y: auto;
   padding: 36px 8px 48px 0;
 }
-.rail__title { font-size: 13px; color: var(--grey); margin-bottom: 4px; }
 .rail__month { margin: 18px 0 6px 30px; font-family: var(--figure); font-stretch: 78%; font-weight: 700; font-size: 15px; }
 .route { position: relative; }
 .route::before { content: ''; position: absolute; left: 8px; top: 6px; bottom: 6px; width: 3px; background: var(--ink); }
@@ -315,12 +315,15 @@ input, select { font: inherit; color: inherit; }
 .stop[data-empty='true'] .stop__name { color: var(--grey); }
 .stop__name { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .stop__n { font-size: 12.5px; color: var(--grey); }
-.stop[aria-current='true'] > a { font-weight: 700; }
-.stop[aria-current='true'] > a::after { content: ''; position: absolute; right: -8px; top: 8px; bottom: 8px; width: 4px; background: var(--signal); }
-.stop__sub { margin: 2px 0 10px 30px; padding-left: 12px; box-shadow: inset 1px 0 0 var(--rule); }
-.stop__sub a { display: block; padding: 4px 0 4px 6px; font-size: 13.5px; color: var(--ink-2); line-height: 1.4; }
+.stop[aria-current='true'] > a { font-weight: 750; }
+.stop[aria-current='true'] .stop__name { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+/* 지금 보는 역의 개념: 노선에서 갈라진 지선, 정차점은 작은 원 */
+.stop__sub { margin: 2px 0 10px 30px; padding-left: 0; box-shadow: inset 1px 0 0 var(--ink); }
+.stop__sub a { position: relative; display: block; padding: 4px 0 4px 16px; font-size: 13.5px; color: var(--ink-2); line-height: 1.4; }
+.stop__sub a::before { content: ''; position: absolute; left: -3px; top: 10px; width: 7px; height: 7px; border-radius: 50%; background: var(--paper); box-shadow: inset 0 0 0 1.5px var(--ink); }
 .stop__sub a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
-.stop__sub a[aria-current='page'] { color: var(--ink); font-weight: 700; box-shadow: inset 3px 0 0 var(--signal); padding-left: 10px; }
+.stop__sub a[aria-current='page'] { color: var(--ink); font-weight: 750; }
+.stop__sub a[aria-current='page']::before { left: -5px; top: 8px; width: 11px; height: 11px; background: var(--ink); box-shadow: none; }
 
 /* ---------- 공통 타이포 ---------- */
 
@@ -391,43 +394,58 @@ a.tag:hover, button.tag:hover { box-shadow: inset 0 0 0 1.5px var(--ink); }
 .tt { width: 100%; border-collapse: collapse; font-size: 15px; }
 .tt thead th {
   text-align: left;
-  font-size: 12.5px;
-  font-weight: 500;
-  color: var(--grey);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
   padding: 0 12px 8px 0;
-  border-bottom: 2px solid var(--rule-strong);
+  border-bottom: 3px solid var(--rule-strong);
   white-space: nowrap;
 }
 .tt th.r, .tt td.r { text-align: right; }
-.tt td { padding: 0 12px 0 0; height: 54px; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+.tt td { padding: 0 12px 0 0; height: 48px; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+/* 날짜 칸은 세로 괘선으로 나눈다 */
+.tt td.dep-col, .tt td.days-col, .tt th:nth-child(4), .tt th:nth-child(6) { padding-left: 14px; box-shadow: inset 1px 0 0 var(--rule); }
 .tt tbody tr { cursor: pointer; transition: background-color 120ms ease; }
 .tt tbody tr:hover { background: var(--paper-2); }
-.tt tbody tr[data-empty='true'] td { color: var(--grey); }
-.tt tbody tr[data-empty='true'] .tt__name { font-weight: 400; }
+.tt tbody tr[data-empty='true'] .tt__name { font-weight: 400; color: var(--ink-2); }
+.tt tbody tr[data-empty='true'] .n-col { color: var(--grey); }
+/* 노선: 상태 표식을 한 줄로 꿴다 */
+.tt .route-col { position: relative; width: 30px; padding: 0; }
+.tt td.route-col::before { content: ''; position: absolute; left: 10px; top: 0; bottom: -1px; width: 3px; background: var(--ink); }
+.tt tr[data-edge='first'] td.route-col::before { top: 50%; }
+.tt tr[data-edge='last'] td.route-col::before { bottom: 50%; }
+.tt td.route-col .mark { position: relative; z-index: 1; margin-left: 5px; width: 13px; height: 13px; box-shadow: inset 0 0 0 2.5px var(--ink); }
+.tt td.route-col .mark[data-s='done'] { box-shadow: none; }
+.tt td.route-col .mark[data-s='today'] { width: 17px; height: 17px; margin-left: 3px; box-shadow: inset 0 0 0 3px var(--signal); }
+.tt td.route-col .mark[data-s='today']::after { inset: 5px; }
+/* 월: 굵은 검정 띠 */
 .tt__month td {
   height: auto;
-  padding: 26px 0 8px;
-  border-bottom: 2px solid var(--rule-strong);
+  padding: 7px 12px 6px;
+  background: var(--ink);
+  color: var(--paper);
+  border-bottom: 0;
   cursor: default;
-  font-family: var(--figure);
-  font-stretch: 78%;
-  font-weight: 800;
-  font-size: 24px;
 }
+.tt__month td .fig { font-size: 22px; font-weight: 800; }
 .tt__month:hover { background: none !important; }
-.tt__month small { margin-left: 12px; font-family: var(--font); font-size: 13px; font-weight: 400; color: var(--grey); }
-.tt__name { font-weight: 600; }
-.tt__name a:hover { text-decoration: underline; text-underline-offset: 3px; }
-.tt__sub { display: block; font-size: 13px; font-weight: 400; color: var(--grey); }
-.tt .fig { font-size: 17px; font-weight: 600; }
-.tt__now { color: var(--signal-ink); font-weight: 700; font-size: 13.5px; }
-.tt td.code-col { width: 56px; }
-.tt td.state-col { width: 1%; white-space: nowrap; font-size: 13.5px; }
-.tt td.state-col span { display: inline-flex; align-items: center; gap: 8px; }
+.tt__month small { margin-left: 14px; font-size: 13px; opacity: 0.8; }
+.tt tbody tr.tt__month + tr td { border-top: 0; }
+.tt__name { font-weight: 650; }
+.tt__name:hover { text-decoration: underline; text-underline-offset: 3px; }
+.tt__sub { display: block; font-size: 12.5px; font-weight: 400; color: var(--grey); }
+.tt .fig { font-size: 19px; font-weight: 800; }
+.tt__now { color: var(--signal-ink); font-weight: 700; }
+.tt td.code-col { width: 52px; }
+.tt td.n-col, .tt td.q-col, .tt td.days-col { font-family: var(--figure); font-stretch: 78%; font-size: 17px; font-weight: 700; }
+.tt-key { margin: 14px 0 18px; }
+.tt-key .mark { box-shadow: inset 0 0 0 2.5px var(--ink); }
+.tt-key .mark[data-s='done'] { box-shadow: none; }
+.tt-key .mark[data-s='today'] { box-shadow: inset 0 0 0 3px var(--signal); }
 
 /* ---------- 홈: 지금 운행 중 ---------- */
 
-.now { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 56px; align-items: start; }
+.now { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 56px; align-items: end; }
 .now__date { display: flex; align-items: baseline; gap: 14px; }
 .now__date .fig { font-size: 112px; font-weight: 800; line-height: 0.86; letter-spacing: -0.01em; }
 .now__date span:last-child { font-size: 22px; font-weight: 700; }
@@ -483,12 +501,6 @@ a.tag:hover, button.tag:hover { box-shadow: inset 0 0 0 1.5px var(--ink); }
 .finder__box svg { width: 22px; height: 22px; color: var(--ink); flex: none; }
 .finder__box > span:not(.kbd) { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .finder__try { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13.5px; color: var(--grey); }
-
-.board { width: 100%; border-collapse: collapse; }
-.board th { text-align: left; font-weight: 400; font-size: 14px; color: var(--grey); padding: 10px 0; border-bottom: 1px solid var(--rule); }
-.board td { text-align: right; padding: 10px 0; border-bottom: 1px solid var(--rule); font-size: 14px; color: var(--grey); }
-.board td .fig { font-size: 26px; font-weight: 700; color: var(--ink); margin-right: 4px; }
-.board tr:first-child th, .board tr:first-child td { border-top: 2px solid var(--rule-strong); }
 
 /* 전체 운행 구간 띠 */
 .span { margin-top: 18px; }
@@ -568,14 +580,22 @@ a.span__cell:hover { transform: scaleY(1.2); }
 /* ---------- 과목 (역 안내) ---------- */
 
 .station-head { display: grid; gap: 0; }
-.station-head__line { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--grey); margin-bottom: 14px; }
 .station-times { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 0; border-top: 2px solid var(--rule-strong); border-bottom: 1px solid var(--rule); }
 .station-times > div { padding: 12px 32px 12px 0; margin-right: 32px; }
 .station-times > div + div { padding-left: 0; }
 .station-times dt { font-size: 12.5px; color: var(--grey); }
 .station-times dd { font-size: 16px; font-weight: 600; }
-.station-times dd .fig { font-size: 26px; font-weight: 800; }
+.station-times dd .fig { font-size: 24px; font-weight: 800; }
 .kw { margin-top: 18px; }
+.title-line { display: flex; align-items: flex-start; gap: 16px; }
+.title-line .stn--lg { margin-top: 6px; }
+.station-times__link { text-decoration: underline; text-decoration-thickness: 1.5px; text-decoration-color: var(--signal); text-underline-offset: 3px; }
+.station-times__link:hover { color: var(--signal-ink); }
+.station-times__mark { display: inline-flex; align-items: center; gap: 8px; }
+.station-times__mark .mark { box-shadow: inset 0 0 0 2.5px var(--ink); }
+.station-times__mark .mark[data-s='done'] { box-shadow: none; }
+.station-times__mark .mark[data-s='today'] { box-shadow: inset 0 0 0 3px var(--signal); }
+.meta .stn { vertical-align: 1px; margin-right: 4px; }
 
 .split { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 56px; align-items: start; }
 .split__side { display: flex; flex-direction: column; gap: 40px; position: sticky; top: calc(var(--mast) + 24px); }
@@ -701,10 +721,10 @@ a.span__cell:hover { transform: scaleY(1.2); }
   padding: 1px 5px;
   background: var(--paper-2);
 }
-.prose blockquote { padding-left: 16px; color: var(--ink-2); box-shadow: inset 2px 0 0 var(--rule); }
+.prose blockquote { padding-left: 16px; color: var(--ink-2); box-shadow: inset 1px 0 0 var(--rule); }
 .prose .v-block, .prose .code, .prose .table-scroll { max-width: none; }
 
-.code { position: relative; background: var(--paper-2); overflow: hidden; }
+.code { position: relative; background: var(--paper); box-shadow: inset 0 0 0 1px var(--rule); overflow: hidden; }
 .code pre { margin: 0; padding: 18px 20px; overflow-x: auto; font-family: var(--mono); font-size: 13.5px; line-height: 1.65; tab-size: 2; }
 .code code { font-family: inherit; background: none; padding: 0; font-size: inherit; }
 .code__lang { position: absolute; top: 0; right: 0; padding: 3px 8px; background: var(--ink); color: var(--paper); font-family: var(--figure); font-stretch: 78%; font-size: 12px; font-weight: 700; text-transform: uppercase; }
@@ -782,6 +802,16 @@ a.span__cell:hover { transform: scaleY(1.2); }
 .v-compare thead .v-compare__corner { background: var(--ink); width: 22%; }
 .v-compare tbody th { text-align: left; font-weight: 600; font-size: 14px; color: var(--grey); padding: 12px 14px 12px 0; vertical-align: top; border-bottom: 1px solid var(--rule); }
 .v-compare tbody td { padding: 12px 14px; vertical-align: top; border-bottom: 1px solid var(--rule); }
+/* 좁은 칸: 행마다 한 덩어리로 다시 쌓는다 (항목 → 대상별 값) */
+@container (max-width: 520px) {
+  .v-compare table, .v-compare tbody, .v-compare tr, .v-compare th, .v-compare td { display: block; }
+  .v-compare thead { display: none; }
+  .v-compare tbody tr { padding: 12px 0 10px; border-bottom: 1px solid var(--rule); }
+  .v-compare tbody tr:first-child { border-top: 3px solid var(--rule-strong); }
+  .v-compare tbody th { padding: 0 0 6px; border: 0; color: var(--ink); font-size: 15px; font-weight: 750; }
+  .v-compare tbody td { display: grid; grid-template-columns: minmax(5.5em, 32%) minmax(0, 1fr); gap: 10px; padding: 4px 0; border: 0; }
+  .v-compare tbody td::before { content: attr(data-col); font-weight: 700; font-size: 13.5px; }
+}
 
 /* formula */
 .v-formula { display: flex; flex-direction: column; border-top: 3px solid var(--rule-strong); }
@@ -917,7 +947,8 @@ a.wk:hover { background: var(--paper-2); }
 .dialog__body { overflow-y: auto; padding: 6px 0; }
 .dialog__group { padding: 12px 18px 6px; font-size: 12.5px; font-weight: 700; color: var(--grey); border-bottom: 1px solid var(--rule); }
 .hit { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 12px; align-items: center; padding: 11px 18px; border-bottom: 1px solid var(--rule); }
-.hit[aria-selected='true'] { background: var(--paper-2); box-shadow: inset 4px 0 0 var(--signal); }
+.hit[aria-selected='true'] { background: var(--paper-2); }
+.hit[aria-selected='true'] .hit__title { text-decoration: underline; text-underline-offset: 3px; }
 .hit .stn { grid-row: 1 / span 2; }
 .hit__title { font-size: 15.5px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .hit__title mark { background: var(--selection); color: inherit; }
@@ -983,17 +1014,21 @@ a.wk:hover { background: var(--paper-2); }
   .prose { font-size: 16.5px; }
   .tt thead { display: none; }
   .tt, .tt tbody { display: block; }
-  .tt tbody tr { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 2px 10px; padding: 12px 0; border-bottom: 1px solid var(--rule); }
-  .tt td { height: auto; padding: 0; border: 0; }
-  .tt td.code-col { grid-row: 1 / span 2; padding-top: 2px; }
-  .tt td.name-col { grid-column: 2; }
-  .tt td.dep-col { grid-column: 2; grid-row: 2; font-size: 14px; color: var(--grey); }
+  .tt tbody tr { display: grid; grid-template-columns: 28px 48px minmax(0, 1fr) auto; gap: 2px 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--rule); position: relative; }
+  .tt td { height: auto; padding: 0; border: 0; box-shadow: none !important; }
+  .tt td.route-col { grid-row: 1 / span 2; align-self: stretch; display: flex; align-items: center; }
+  .tt td.route-col::before { top: -11px; bottom: -11px; }
+  .tt tr[data-edge='first'] td.route-col::before { top: 50%; }
+  .tt tr[data-edge='last'] td.route-col::before { bottom: 50%; }
+  .tt td.code-col { grid-row: 1 / span 2; width: auto; }
+  .tt td.name-col { grid-column: 3; grid-row: 1; min-width: 0; }
+  .tt td.name-col .tt__sub:not(.tt__now) { display: none; }
+  .tt td.dep-col { grid-column: 3; grid-row: 2; padding: 0; font-size: 13px; color: var(--grey); }
   .tt td.dep-col .fig { font-size: 15px; }
   .tt td.arr-col, .tt td.days-col, .tt td.q-col { display: none; }
-  .tt td.n-col { grid-column: 3; grid-row: 1; font-size: 14px; }
-  .tt td.state-col { grid-column: 3; grid-row: 2; justify-self: end; }
-  .tt__month { display: block !important; padding: 0 !important; border: 0 !important; }
-  .tt__month td { display: block; padding: 22px 0 6px; }
+  .tt td.n-col { grid-column: 4; grid-row: 1 / span 2; }
+  .tt__month { display: block !important; padding: 0 !important; border: 0 !important; margin-top: 18px; }
+  .tt__month td { display: block; padding: 7px 12px 6px; }
   .now__next { grid-template-columns: auto auto minmax(0, 1fr); gap: 4px 12px; }
   .now__next-name { grid-column: 1 / -1; white-space: normal; }
   .now__next small:last-child { grid-row: 1; grid-column: 3; }
@@ -1025,10 +1060,20 @@ a.wk:hover { background: var(--paper-2); }
   .nb-cell--code { grid-template-columns: minmax(0, 1fr); }
   .nb-count { display: none; }
   .nb-md { padding-left: 4px; }
-  .station-times > div { padding-right: 20px; margin-right: 20px; }
+  .station-times > div { padding-right: 18px; margin-right: 0; }
+  .title-line { gap: 12px; }
+  .title-line .stn--lg { margin-top: 3px; min-width: 52px; height: 30px; font-size: 18px; }
   .brand__name { font-size: 16px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0ms !important; animation: none !important; }
+}
+
+/* 마스트헤드 운행 기간: 내비가 펼쳐진 좁은 데스크톱과 휴대폰에서는 접는다 */
+@media (max-width: 1260px) and (min-width: 1081px) {
+  .mast__run { display: none; }
+}
+@media (max-width: 720px) {
+  .mast__run { display: none; }
 }

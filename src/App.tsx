@@ -205,6 +205,17 @@ export default function App() {
             </span>
             <span className="brand__name">SKALA 개념 운행표</span>
           </a>
+          <span className="mast__run" title="교육 달력 기준 운행 기간">
+            <span className="fig num">
+              {dot(PROGRAM.start)} → {dot(PROGRAM.lastKnown)}
+            </span>
+            {classOn(todayISO()) && (
+              <span className="mast__live">
+                <span className="live-dot" aria-hidden="true" />
+                운행 중
+              </span>
+            )}
+          </span>
           <nav className="mast__nav" aria-label="주요 화면">
             {NAV.map((n) => (
               <a key={n.name} href={n.href} aria-current={navCurrent(n.name)}>

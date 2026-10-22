@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { COURSES } from '../data/schedule'
 import { conceptHref, conceptsOf, courseHref, hasNotes } from '../lib/content'
 import { courseStatus, parse, todayISO } from '../lib/dates'
@@ -12,10 +13,24 @@ export function RouteRail({ route, onNavigate }: { route: Route; onNavigate?: ()
   const today = todayISO()
   const current = route.name === 'course' || route.name === 'concept' || route.name === 'material' ? route.course : null
   const currentSlug = route.name === 'concept' ? route.slug : null
+  const nav = useRef<HTMLElement>(null)
+
+  // 노선도가 길어서, 지금 보는 역이 레일 안에서 보이도록 맞춘다
+  useEffect(() => {
+    const el = nav.current
+    const stop = el?.querySelector<HTMLElement>('.stop[aria-current="true"]')
+    if (!el || !stop) return
+    const top = stop.getBoundingClientRect().top - el.getBoundingClientRect().top + el.scrollTop - el.clientHeight / 3
+    el.scrollTop = Math.max(0, top)
+  }, [current])
 
   return (
-    <nav className="rail" aria-label="과목 노선도" onClick={(e) => (e.target as HTMLElement).closest('a') && onNavigate?.()}>
-      <p className="rail__title">노선도 · 수업 순서</p>
+    <nav
+      ref={nav}
+      className="rail"
+      aria-label="과목 노선도 (수업 순서)"
+      onClick={(e) => (e.target as HTMLElement).closest('a') && onNavigate?.()}
+    >
       {MONTHS.map((m) => {
         const courses = COURSES.filter((c) => parse(c.days[0]).getMonth() + 1 === m)
         if (!courses.length) return null

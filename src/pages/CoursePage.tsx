@@ -40,24 +40,11 @@ export function CoursePage({ id }: { id: string }) {
 
   return (
     <>
-      <nav className="crumbs" aria-label="위치">
-        <a href="#/">운행표</a>
-        <span className="sep">/</span>
-        <span>{LINE_NAME[course.track]}</span>
-        <span className="sep">/</span>
-        <span className="num">
-          {idx + 1}번째 역 · 전체 {COURSES.length}
-        </span>
-      </nav>
-
       <header className="station-head">
-        <div className="station-head__line">
+        <h1 className="title title-line">
           <Code course={course} size="lg" />
-          <span>
-            <StatusMark s={markOf(status)} label />
-          </span>
-        </div>
-        <h1 className="title">{course.title}</h1>
+          <span>{course.title}</span>
+        </h1>
         {note?.summary && (
           <p className="lede">
             <Inline text={note.summary} />
@@ -88,6 +75,18 @@ export function CoursePage({ id }: { id: string }) {
               <dd>{course.instructors.join(' · ')}</dd>
             </div>
           )}
+          <div>
+            <dt>{LINE_NAME[course.track]}</dt>
+            <dd className="num">
+              <span className="fig">{String(idx + 1).padStart(2, '0')}</span> / {COURSES.length}번째 역
+            </dd>
+          </div>
+          <div>
+            <dt>상태</dt>
+            <dd className="station-times__mark">
+              <StatusMark s={markOf(status)} label />
+            </dd>
+          </div>
         </dl>
         {note?.keywords.length ? (
           <div className="tags kw">

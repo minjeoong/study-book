@@ -21,12 +21,6 @@ export function MaterialViewer({ course: courseId, file, page }: { course: strin
 
   return (
     <>
-      <nav className="crumbs" aria-label="위치">
-        <a href="#/materials">자료실</a>
-        <span className="sep">/</span>
-        <Code course={course} />
-        <a href={courseHref(course.id)}>{course.title}</a>
-      </nav>
       <header className="viewer-head">
         <div>
           <h1 className="title title--md">{mat.title}</h1>
@@ -39,6 +33,9 @@ export function MaterialViewer({ course: courseId, file, page }: { course: strin
                 <b>{md(mat.date)}</b> 수업
               </span>
             )}
+            <span>
+              <Code course={course} /> <a className="station-times__link" href={courseHref(course.id)}>{course.title}</a>
+            </span>
             <span>{file}</span>
           </p>
         </div>

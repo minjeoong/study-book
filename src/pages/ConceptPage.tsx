@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { conceptHref, conceptsOf, courseById, courseHref, findConcept, noteOf, resolveRelated } from '../lib/content'
 import { materialHref } from './MaterialViewer'
-import { dot, LINE_NAME, stationCode } from '../lib/stations'
+import { dot, stationCode } from '../lib/stations'
 import { Code, Importance, Inline, Markdown, QAItem } from '../components/Bits'
 import { NotFound } from './NotFound'
 
@@ -26,27 +26,46 @@ export function ConceptPage({ course: courseId, slug, focus }: { course: string;
 
   return (
     <article>
-      <nav className="crumbs" aria-label="위치">
-        <Code course={course} />
-        <a href={courseHref(course.id)}>{course.title}</a>
-        <span className="sep">/</span>
-        <span className="num">
-          개념 {String(i + 1).padStart(2, '0')} / {siblings.length}
-        </span>
-      </nav>
-
       <header>
-        <h1 className="title">{concept.title}</h1>
+        <h1 className="title title-line">
+          <Code course={course} size="lg" />
+          <span>{concept.title}</span>
+        </h1>
         {concept.en && concept.en !== concept.title && <p className="concept-head__en">{concept.en}</p>}
-        <p className="meta num">
-          <span>
-            면접 빈출 <Importance level={concept.importance} /> <b>{impLabel}</b>
-          </span>
-          <span>
-            {LINE_NAME[course.track]} · <b>{dot(first)}</b>
-            {first !== last && <> – <b>{dot(last)}</b></>} 수업
-          </span>
-        </p>
+        <dl className="station-times">
+          <div>
+            <dt>역</dt>
+            <dd>
+              <a className="station-times__link" href={courseHref(course.id)}>
+                {course.title}
+              </a>
+            </dd>
+          </div>
+          <div>
+            <dt>수업</dt>
+            <dd className="num">
+              <span className="fig">{dot(first)}</span>
+              {first !== last && (
+                <>
+                  {' – '}
+                  <span className="fig">{dot(last)}</span>
+                </>
+              )}
+            </dd>
+          </div>
+          <div>
+            <dt>개념</dt>
+            <dd className="num">
+              <span className="fig">{String(i + 1).padStart(2, '0')}</span> / {siblings.length}
+            </dd>
+          </div>
+          <div>
+            <dt>면접 빈출</dt>
+            <dd>
+              <Importance level={concept.importance} /> {impLabel}
+            </dd>
+          </div>
+        </dl>
       </header>
 
       <div className="def">

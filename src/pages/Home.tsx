@@ -48,9 +48,6 @@ function NowBoard({ today, onSearch }: { today: string; onSearch: (q?: string) =
   const focus = cls?.course ?? next?.course
   const after = cls ? CLASS_DAYS.find((d) => d.date > today && d.course.id !== cls.course.id) : next
 
-  const readyCourses = COURSES.filter((c) => hasNotes(c.id))
-  const passed = classDaysUntil(today)
-
   return (
     <section className="now" aria-labelledby="now-title">
       <div>
@@ -108,34 +105,6 @@ function NowBoard({ today, onSearch }: { today: string; onSearch: (q?: string) =
             </button>
           ))}
         </p>
-        <table className="board">
-          <tbody>
-            <tr>
-              <th scope="row">정리한 역 (과목)</th>
-              <td className="num">
-                <span className="fig">{readyCourses.length}</span>/ {COURSES.length}
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">개념 노트</th>
-              <td className="num">
-                <span className="fig">{ALL_CONCEPTS.length}</span>개
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">면접 질문</th>
-              <td className="num">
-                <span className="fig">{ALL_QA.length}</span>개
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">운행한 수업일</th>
-              <td className="num">
-                <span className="fig">{passed}</span>/ {CLASS_DAYS.length}일
-              </td>
-            </tr>
-          </tbody>
-        </table>
       </aside>
     </section>
   )
@@ -212,6 +181,9 @@ function Timetable({ today }: { today: string }) {
     <table className="tt">
       <thead>
         <tr>
+          <th scope="col" className="route-col">
+            <span className="sr-only">상태</span>
+          </th>
           <th scope="col">역</th>
           <th scope="col">과목</th>
           <th scope="col">출발</th>
@@ -225,7 +197,6 @@ function Timetable({ today }: { today: string }) {
           <th scope="col" className="r">
             질문
           </th>
-          <th scope="col">상태</th>
         </tr>
       </thead>
       <tbody>
@@ -236,18 +207,30 @@ function Timetable({ today }: { today: string }) {
           return [
             <tr key={`m${m}`} className="tt__month">
               <td colSpan={8}>
-                {m}월<small className="num">정리 {ready} / {courses.length}</small>
+                <span className="fig">{m}월</span>
+                <small className="num">
+                  {courses.length}개 역 · 정리 {ready}
+                </small>
               </td>
             </tr>,
-            ...courses.map((c) => {
+            ...courses.map((c, i) => {
               const ready = hasNotes(c.id)
               const concepts = conceptsOf(c.id)
               const q = concepts.reduce((n, k) => n + k.qa.length, 0)
-              const s = markOf(courseStatus(c, today))
+              const status = courseStatus(c, today)
+              const s = markOf(status)
               const first = c.days[0]
               const last = c.days[c.days.length - 1]
               return (
-                <tr key={c.id} data-empty={!ready} onClick={() => go(courseHref(c.id))}>
+                <tr
+                  key={c.id}
+                  data-empty={!ready}
+                  data-edge={i === 0 ? 'first' : i === courses.length - 1 ? 'last' : undefined}
+                  onClick={() => go(courseHref(c.id))}
+                >
+                  <td className="route-col">
+                    <StatusMark s={s} />
+                  </td>
                   <td className="code-col">
                     <Code course={c} />
                   </td>
@@ -255,7 +238,13 @@ function Timetable({ today }: { today: string }) {
                     <a className="tt__name" href={courseHref(c.id)} onClick={(e) => e.stopPropagation()}>
                       {c.title}
                     </a>
-                    {c.instructors.length > 0 && <span className="tt__sub">{c.instructors.join(' / ')}</span>}
+                    {status === 'today' ? (
+                      <span className="tt__sub tt__now num">
+                        운행 중 · {c.days.length}일 중 {dayNumberIn(c, today)}일차
+                      </span>
+                    ) : (
+                      c.instructors.length > 0 && <span className="tt__sub">{c.instructors.join(' / ')}</span>
+                    )}
                   </td>
                   <td className="dep-col num">
                     <span className="fig">{dot(first)}</span> {weekday(first)}
@@ -268,13 +257,8 @@ function Timetable({ today }: { today: string }) {
                     )}
                   </td>
                   <td className="days-col r num">{c.days.length}</td>
-                  <td className="n-col r num">{ready ? concepts.length : '자료 대기'}</td>
-                  <td className="q-col r num">{ready ? q : '—'}</td>
-                  <td className="state-col">
-                    <span className={s === 'today' ? 'tt__now' : undefined}>
-                      <StatusMark s={s} label />
-                    </span>
-                  </td>
+                  <td className="n-col r num">{ready ? concepts.length : '—'}</td>
+                  <td className="q-col r num">{ready ? q : ''}</td>
                 </tr>
               )
             }),
@@ -362,6 +346,7 @@ function rotatePicks<T extends { course: string }>(items: T[], n: number, seed: 
 
 export function Home({ onSearch }: { onSearch: (q?: string) => void }) {
   const today = todayISO()
+  const readyCourses = COURSES.filter((c) => hasNotes(c.id))
   const frequent = ALL_CONCEPTS.filter((c) => c.importance === 3)
   const picks = rotatePicks(frequent, 5, classDaysUntil(today))
 
@@ -374,12 +359,31 @@ export function Home({ onSearch }: { onSearch: (q?: string) => void }) {
           <h2 className="sec__title" id="tt-title">
             운행표
           </h2>
-          <span className="sec__note">교육 달력 순서 · 역을 누르면 개념으로 내려가요</span>
+          <span className="sec__note num">
+            정리 {readyCourses.length}/{COURSES.length}역 · 개념 {ALL_CONCEPTS.length} · 질문 {ALL_QA.length} · 운행 {classDaysUntil(today)}/
+            {CLASS_DAYS.length}일
+          </span>
           <a className="sec__link" href="#/schedule">
             주간 일정
           </a>
         </div>
         <ProgramSpan today={today} />
+        <p className="marks-key tt-key">
+          <span>
+            <i className="mark" data-s="done" />
+            지남
+          </span>
+          <span>
+            <i className="mark" data-s="today" />
+            운행 중
+          </span>
+          <span>
+            <i className="mark" data-s="next" />
+            예정
+          </span>
+          <span>— 자료 대기 (개념 정리 전)</span>
+          <span>역을 누르면 개념으로 내려가요</span>
+        </p>
         <div style={{ marginTop: 12 }}>
           <Timetable today={today} />
         </div>
