@@ -3,7 +3,7 @@ title: 입력 값 검증
 en: Form Validation
 summary: 제출 전에 필수 항목·숫자 범위를 확인하고, 실패하면 알리고 멈추기 — 클라이언트 검증은 UX용, 최종 검증은 서버
 importance: 2
-order: 12
+order: 15
 tags:
   - JavaScript
   - 폼
@@ -13,15 +13,15 @@ keypoints:
   - 빈 값 → 범위 순으로 검사하고 첫 실패에서 멈춘다
   - 클라이언트 검증은 우회 가능 — 서버에서 다시 검증한다
 qa:
-  - q: 프론트엔드에서 검증했는데 서버에서도 검증해야 하나?
-    a: 해야 한다. 클라이언트 검증은 개발자 도구로 코드를 바꾸거나 API를 직접 호출하면 쉽게 우회되므로 보안 수단이 아니다. 프론트 검증은 사용자에게 즉시 피드백을 주는 UX 목적이고, 데이터 무결성과 보안은 서버 검증이 책임진다.
-  - q: HTML 속성 검증과 JS 검증은 어떻게 다른가?
-    a: required, min, max 같은 HTML 속성은 코드 없이 브라우저가 제출을 막고 기본 메시지를 보여 준다. JS 검증은 메시지 문구, 항목 간 조건, 현재 연도 같은 동적 기준을 자유롭게 정할 수 있다. 실습은 항목별 안내 문구를 alert로 정확히 보여 줘야 해서 getCarFromForm 함수에서 JS로 검증했다.
+  - q: 프론트엔드에서 검증했는데 서버에서도 검증해야 하나요?
+    a: 해야 합니다. 클라이언트 검증은 개발자 도구로 코드를 바꾸거나 API를 직접 호출하면 쉽게 우회되므로 보안 수단이 아닙니다. 프론트 검증은 사용자에게 즉시 피드백을 주는 UX 목적이고, 데이터 무결성과 보안은 서버 검증이 책임집니다.
+  - q: HTML 속성 검증과 JS 검증은 어떻게 다른가요?
+    a: required, min, max, pattern 같은 HTML 속성은 코드 없이 브라우저가 제출을 막고 기본 메시지를 보여 줍니다. JS 검증은 메시지 문구, 항목 간 조건, 현재 연도 같은 동적 기준을 자유롭게 정할 수 있고, 형식 검사는 RegExp의 test()로 합니다. Day2 실습은 항목별 안내 문구를 alert로 정확히 보여 줘야 해서 getCarFromForm 함수에서 JS로 검증했습니다.
 related:
   - html-forms
   - event-delegation
   - array-methods-crud
-source: 슬라이드 p.5 (입력 값 검증 메시지 6종), p.6 (수정 완료도 같은 검증), app.js getCarFromForm TODO 6
+source: Day1 슬라이드 p.73–74 (Input Types·속성 required, min/max, pattern), p.227 (RegExp — 전화번호 검증), Day2 가이드 p.5 (입력 값 검증 메시지 6종), p.6 (수정 완료도 같은 검증), app.js getCarFromForm TODO 6
 ---
 
 ```flow
@@ -42,7 +42,7 @@ submit :: 등록 또는 수정 완료 클릭 (같은 검증 사용)
 | 6 | 연료 | 선택 필수 | 연료를 선택하세요. |
 
 ```js
-// getCarFromForm — TODO 6 (값 읽기·Number 변환은 제공 코드)
+// getCarFromForm — Day2 TODO 6 (값 읽기·Number 변환은 제공 코드)
 if (!maker) { alert('제조사를 선택하세요.'); return null }
 if (!model) { alert('모델명을 입력하세요.'); return null }
 if (!yearText || year < 1990 || year >= maxYear) {      // maxYear = 올해 + 1
@@ -52,6 +52,9 @@ if (!priceText || price < 1) { alert('가격은 1이상 입력하세요.'); retu
 if (!mileageText || mileage < 0) { alert('주행거리는 0이상 입력하세요.'); return null }
 if (!fuel) { alert('연료를 선택하세요.'); return null }
 return { maker, model, year, mileage, price, fuel, status }
+
+// Day1 RegExp 예 — 형식 검사
+/[0-9]{3}-[0-9]{4}-[0-9]{4}/.test('010-1234-5678')    // true
 ```
 
 > [!warn] 헷갈리기 쉬움
