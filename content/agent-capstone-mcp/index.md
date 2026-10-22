@@ -16,4 +16,16 @@ materials:
     title: "과제 제출 — FastAPI (코드, 결과, 캡처)"
     type: lab
     date: 2026-10-21
+  - file: submission-streaming-prev-design.zip
+    title: "과제 제출 — Streaming (이전 디자인)"
+    type: lab
+    date: 2026-10-22
+  - file: submission-streaming.zip
+    title: "과제 제출 — Streaming (코드, 결과, 캡처)"
+    type: lab
+    date: 2026-10-22
+  - file: submission-multiagent.zip
+    title: "과제 제출 — Multi-agent (코드, 결과, 캡처)"
+    type: lab
+    date: 2026-10-22
 ---
