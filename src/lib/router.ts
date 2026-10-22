@@ -1,0 +1,40 @@
+import { useEffect, useState } from 'react'
+
+export type Route =
+  | { name: 'home' }
+  | { name: 'schedule' }
+  | { name: 'interview'; course?: string }
+  | { name: 'materials' }
+  | { name: 'course'; course: string }
+  | { name: 'concept'; course: string; slug: string; focus?: string }
+  | { name: 'notfound' }
+
+export function parseHash(hash: string): Route {
+  const [path, query = ''] = hash.replace(/^#\/?/, '').split('?')
+  const parts = path.split('/').filter(Boolean).map(decodeURIComponent)
+  if (parts.length === 0) return { name: 'home' }
+  if (parts[0] === 'schedule') return { name: 'schedule' }
+  if (parts[0] === 'interview') return { name: 'interview', course: new URLSearchParams(query).get('course') ?? undefined }
+  if (parts[0] === 'materials') return { name: 'materials' }
+  if (parts[0] === 'c' && parts.length === 2) return { name: 'course', course: parts[1] }
+  if (parts[0] === 'c' && parts.length === 3) return { name: 'concept', course: parts[1], slug: parts[2], focus: query || undefined }
+  return { name: 'notfound' }
+}
+
+export function useRoute(): Route {
+  const [route, setRoute] = useState(() => parseHash(location.hash))
+  useEffect(() => {
+    const onChange = () => {
+      const next = parseHash(location.hash)
+      setRoute(next)
+      if (!(next.name === 'concept' && next.focus)) window.scrollTo({ top: 0 })
+    }
+    window.addEventListener('hashchange', onChange)
+    return () => window.removeEventListener('hashchange', onChange)
+  }, [])
+  return route
+}
+
+export function go(href: string) {
+  location.hash = href.replace(/^#/, '')
+}
