@@ -1070,10 +1070,26 @@ a.wk:hover { background: var(--paper-2); }
   *, *::before, *::after { transition-duration: 0ms !important; animation: none !important; }
 }
 
-/* 마스트헤드 운행 기간: 내비가 펼쳐진 좁은 데스크톱과 휴대폰에서는 접는다 */
+/* 마스트헤드 운행 기간: 좁은 폭에서는 '운행 중' 글자와 긴 이름을 접고 기간은 남긴다 */
 @media (max-width: 1260px) and (min-width: 1081px) {
-  .mast__run { display: none; }
+  .mast__in { gap: 18px; }
+  .mast__live-text { display: none; }
+  .mast__search { width: 180px; }
 }
 @media (max-width: 720px) {
-  .mast__run { display: none; }
+  .brand__long, .mast__live-text { display: none; }
+  .mast__run { margin-left: -2px; padding-left: 12px; gap: 8px; }
+  .mast__run .fig { font-size: 15px; }
 }
+/* 노선도 레일이 스크롤로 잘리는 아래쪽은 괘선 하나로 마감한다 */
+.rail::after {
+  content: '';
+  position: sticky;
+  bottom: -48px;
+  display: block;
+  height: 28px;
+  margin-top: -28px;
+  background: var(--paper);
+  box-shadow: inset 0 1px 0 var(--rule-strong);
+}
+.drawer .rail::after { display: none; }

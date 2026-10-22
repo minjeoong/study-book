@@ -203,7 +203,9 @@ export default function App() {
             <span className="brand__mark" aria-hidden="true">
               S
             </span>
-            <span className="brand__name">SKALA 개념 운행표</span>
+            <span className="brand__name">
+              SKALA<span className="brand__long"> 개념 운행표</span>
+            </span>
           </a>
           <span className="mast__run" title="교육 달력 기준 운행 기간">
             <span className="fig num">
@@ -212,7 +214,7 @@ export default function App() {
             {classOn(todayISO()) && (
               <span className="mast__live">
                 <span className="live-dot" aria-hidden="true" />
-                운행 중
+                <span className="mast__live-text">운행 중</span>
               </span>
             )}
           </span>
