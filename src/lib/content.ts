@@ -136,8 +136,13 @@ export function noteOf(courseId: string): CourseNote | undefined {
   return notesByCourse.get(courseId)
 }
 
+/** 개념 노트까지 정리된 과목인지 (자료만 올라온 과목은 아니다) */
 export function hasNotes(courseId: string): boolean {
-  return notesByCourse.has(courseId) || conceptsByCourse.has(courseId)
+  return conceptsByCourse.has(courseId)
+}
+
+export function hasMaterials(courseId: string): boolean {
+  return (notesByCourse.get(courseId)?.materials.length ?? 0) > 0
 }
 
 export function courseById(id: string): Course | undefined {

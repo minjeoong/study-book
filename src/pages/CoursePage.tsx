@@ -146,6 +146,11 @@ export function CoursePage({ id }: { id: string }) {
                 </h2>
                 <span className="sec__note">수업 순서대로</span>
               </div>
+              {concepts.length === 0 && (
+                <p className="empty">
+                  수업 자료 {note?.materials.length ?? 0}개가 올라와 있어요. 개념 노트는 정리하는 중이에요.
+                </p>
+              )}
               <ol className="stops">
                 {concepts.map((c, i) => (
                   <li key={c.slug}>
