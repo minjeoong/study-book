@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
-import { conceptHref, conceptsOf, courseById, courseHref, findConcept, resolveRelated } from '../lib/content'
+import { conceptHref, conceptsOf, courseById, courseHref, findConcept, noteOf, resolveRelated } from '../lib/content'
+import { materialHref } from './MaterialViewer'
 import { dayRanges } from '../lib/dates'
 import { Importance, Inline, Markdown, QAItem, TrackChip } from '../components/Bits'
 import { Icon } from '../components/Icon'
@@ -98,7 +99,11 @@ export function ConceptPage({ course: courseId, slug, focus }: { course: string;
             </section>
           )}
 
-          {concept.source && <p className="source">출처: {concept.source}</p>}
+          {concept.source && (
+            <p className="source">
+              출처: <SourceLinks source={concept.source} course={course.id} />
+            </p>
+          )}
 
           <nav className="pager" aria-label="이전 다음 개념">
             {prev && (
@@ -139,4 +144,29 @@ export function ConceptPage({ course: courseId, slug, focus }: { course: string;
       </div>
     </div>
   )
+}
+
+/** "Day2 슬라이드 p.18–23" 의 쪽 번호를 그 날 슬라이드 뷰어로 연결한다 */
+function SourceLinks({ source, course }: { source: string; course: string }) {
+  const slides = (noteOf(course)?.materials ?? []).filter((m) => m.type === 'slides' && m.file.endsWith('.pdf'))
+  if (!slides.length) return <>{source}</>
+  const deckFor = (day: number) =>
+    slides.find((m) => m.file.includes(`day${day}`)) ?? slides[Math.min(day, slides.length) - 1] ?? slides[0]
+
+  const out: React.ReactNode[] = []
+  const re = /p\.(\d+)(?:\s*[–-]\s*(\d+))?/g
+  let last = 0
+  for (let m = re.exec(source); m; m = re.exec(source)) {
+    const before = source.slice(0, m.index)
+    const day = Number([...before.matchAll(/Day\s*(\d)/g)].pop()?.[1] ?? 1)
+    out.push(source.slice(last, m.index))
+    out.push(
+      <a key={m.index} className="source__link" href={materialHref(deckFor(day), Number(m[1]))}>
+        {m[0]}
+      </a>,
+    )
+    last = m.index + m[0].length
+  }
+  out.push(source.slice(last))
+  return <>{out}</>
 }
