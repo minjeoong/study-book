@@ -11,3 +11,6 @@ dist-artifact/
 
 # design skill 작업 폴더 (스크린샷 등)
 .taste-skill/
+
+# impeccable 검수용 스크린샷
+.impeccable/review/
