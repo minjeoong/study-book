@@ -14,9 +14,17 @@ const rest = head
   .replace(/<meta charset[^>]*>/i, '')
   .replace(/<meta name="viewport"[^>]*>/i, '')
 
+// 숫자·코드 서체(Archivo, 약 210KB)는 단일 파일 안에 data URI 로 넣어 어떤 환경에서도 바로 보이게 한다.
+// 본문 서체(Pretendard, 3MB)는 함께 게시하는 파일에서 읽는다.
+const archivoCss = readFileSync('dist/fonts/archivo/archivo.css', 'utf8').replace(
+  /url\(\.\/(archivo-[a-z-]+\.woff2)\)/g,
+  (_, f) => `url(data:font/woff2;base64,${readFileSync(`dist/fonts/archivo/${f}`).toString('base64')})`,
+)
+const headInlined = rest.replace(/<link rel="stylesheet" href="\.\/fonts\/archivo\/archivo\.css" \/>/, `<style>${archivoCss}</style>`)
+
 rmSync('dist-artifact', { recursive: true, force: true })
 mkdirSync('dist-artifact')
-writeFileSync('dist-artifact/index.html', `${title}\n${rest.trim()}\n${body.trim()}\n`)
+writeFileSync('dist-artifact/index.html', `${title}\n${headInlined.trim()}\n${body.trim()}\n`)
 cpSync('dist/materials', 'dist-artifact/materials', { recursive: true })
 cpSync('dist/fonts', 'dist-artifact/fonts', { recursive: true })
 console.log('dist-artifact/index.html 작성 완료')
