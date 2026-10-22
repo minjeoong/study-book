@@ -121,6 +121,14 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; scroll-padding-top: 72px; }
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 30;
+  background: var(--chrome);
+}
 body {
   margin: 0;
   background: var(--chrome);
@@ -226,7 +234,7 @@ input { font: inherit; color: inherit; }
 
 .topbar {
   position: sticky;
-  top: 0;
+  top: env(safe-area-inset-top, 0px);
   z-index: 20;
   height: var(--topbar);
   display: grid;
