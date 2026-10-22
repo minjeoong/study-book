@@ -11,6 +11,7 @@ import { InterviewPage } from './pages/InterviewPage'
 import { MaterialsPage } from './pages/MaterialsPage'
 import { SchedulePage } from './pages/SchedulePage'
 import { NotFound } from './pages/NotFound'
+import { MaterialViewer } from './pages/MaterialViewer'
 
 type Theme = 'light' | 'dark' | null
 const THEME_KEY = 'skala-notes:theme'
@@ -38,6 +39,8 @@ function titleOf(route: Route): string {
       return courseById(route.course)?.title ?? '과목'
     case 'concept':
       return findConcept(route.course, route.slug)?.title ?? '개념'
+    case 'material':
+      return '수업 자료'
     default:
       return 'SKALA 개념 노트'
   }
@@ -115,6 +118,9 @@ export default function App() {
       break
     case 'concept':
       page = <ConceptPage course={route.course} slug={route.slug} focus={route.focus} />
+      break
+    case 'material':
+      page = <MaterialViewer course={route.course} file={route.file} page={route.page} />
       break
     default:
       page = <NotFound />

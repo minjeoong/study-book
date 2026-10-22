@@ -13,7 +13,7 @@ export function MaterialsPage() {
     <div className="page">
       <h1 className="page-title">자료실</h1>
       <p className="page-sub num">
-        수업에서 받은 원본 자료 <b>{ALL_MATERIALS.length}개</b>를 과목과 수업일 기준으로 분류했어요. 슬라이드는 새 탭에서 열리고, 노트북과 실습 파일은 내려받아요.
+        수업에서 받은 원본 자료 <b>{ALL_MATERIALS.length}개</b>를 과목과 수업일 기준으로 분류했어요. 슬라이드와 노트북은 이 안에서 바로 열려요.
       </p>
 
       {groups.map((g) => (
@@ -39,13 +39,7 @@ export function MaterialsPage() {
               {g.items.map((m) => (
                 <tr key={m.file}>
                   <td>
-                    <a
-                      className="file"
-                      href={m.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      download={m.type === 'slides' ? undefined : m.file}
-                    >
+                    <a className="file" href={`#/m/${m.course}/${encodeURIComponent(m.file)}`}>
                       {m.title}
                     </a>
                   </td>

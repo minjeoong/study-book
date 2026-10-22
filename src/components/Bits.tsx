@@ -75,7 +75,7 @@ export const MAT_LABEL: Record<MaterialType, string> = { slides: '슬라이드',
 export function MaterialLink({ m }: { m: Material }) {
   const ext = m.file.split('.').pop()?.toUpperCase()
   return (
-    <a className="mat" href={m.url} target="_blank" rel="noreferrer" download={m.type === 'slides' ? undefined : m.file}>
+    <a className="mat" href={`#/m/${m.course}/${encodeURIComponent(m.file)}`}>
       <span className="mat__icon">
         <Icon name={MAT_ICON[m.type] ?? 'file'} />
       </span>
