@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+*.log
+
+# 로컬 전용 Claude 설정 · 플랫폼별 바이너리 (설치 시 자동 생성)
+.claude/settings.local.json
+.claude/skills/impeccable/scripts/bin/
