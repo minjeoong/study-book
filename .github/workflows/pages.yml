@@ -1,11 +1,10 @@
 # GitHub Pages 배포
 # 저장소가 비공개면 GitHub Pro 이상에서만 동작한다. 공개 저장소는 무료.
-# Settings → Pages → Source 를 "GitHub Actions" 로 바꾼 뒤 main 에 푸시하거나 수동 실행.
+# Settings → Pages → Source 를 "GitHub Actions" 로 바꾸면, 기본 브랜치에 푸시할 때마다 배포된다.
 name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -19,6 +18,8 @@ concurrency:
 
 jobs:
   build:
+    # 기본 브랜치(지금은 작업 브랜치, 나중에 main)만 배포한다
+    if: github.ref_name == github.event.repository.default_branch
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
