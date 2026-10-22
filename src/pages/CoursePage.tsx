@@ -1,8 +1,8 @@
 import { COURSES } from '../data/schedule'
 import { conceptHref, conceptsOf, courseById, courseHref, hasNotes, noteOf } from '../lib/content'
-import { courseStatus, dayRanges, md, STATUS_LABEL, todayISO } from '../lib/dates'
-import { Importance, Inline, Markdown, MaterialLink, TrackChip } from '../components/Bits'
-import { Icon } from '../components/Icon'
+import { courseStatus, md, todayISO, weekday } from '../lib/dates'
+import { dot, LINE_NAME, stationCode } from '../lib/stations'
+import { Code, Importance, Inline, Markdown, MaterialLink, markOf, StatusMark } from '../components/Bits'
 import { NotFound } from './NotFound'
 
 export function CoursePage({ id }: { id: string }) {
@@ -16,111 +16,150 @@ export function CoursePage({ id }: { id: string }) {
   const prev = COURSES[idx - 1]
   const next = COURSES[idx + 1]
   const qaCount = concepts.reduce((n, c) => n + c.qa.length, 0)
-  const sameTrack = COURSES.filter((c) => c.track === course.track && c.id !== id && hasNotes(c.id)).slice(0, 4)
+  const first = course.days[0]
+  const last = course.days[course.days.length - 1]
+  const sameLine = COURSES.filter((c) => c.track === course.track && c.id !== id && hasNotes(c.id)).slice(0, 4)
+
+  const days = (
+    <section aria-labelledby="days-title">
+      <h2 className="side-block__title" id="days-title">
+        수업일 <span className="num">{course.days.length}일</span>
+      </h2>
+      <ol className="days">
+        {course.days.map((d, i) => (
+          <li key={d} className="num">
+            <small>Day {i + 1}</small>
+            <span className="fig">{dot(d)}</span>
+            {weekday(d)}
+            {d === today && <span className="today">운행 중</span>}
+          </li>
+        ))}
+      </ol>
+    </section>
+  )
 
   return (
-    <div className="page">
+    <>
       <nav className="crumbs" aria-label="위치">
-        <a href="#/schedule">교육 일정</a>
-        <Icon name="chevron" />
+        <a href="#/">운행표</a>
+        <span className="sep">/</span>
+        <span>{LINE_NAME[course.track]}</span>
+        <span className="sep">/</span>
         <span className="num">
-          {idx + 1}번째 과목 / {COURSES.length}
+          {idx + 1}번째 역 · 전체 {COURSES.length}
         </span>
       </nav>
 
-      <header className="course-head">
-        <h1 className="page-title">{course.title}</h1>
-        <p className="page-sub num">
-          <b>{dayRanges(course.days)}</b> · {course.days.length}일
-          {course.hours ? ` (${course.hours})` : ''}
-          {course.instructors.length ? ` · ${course.instructors.join(' / ')}` : ''} · {STATUS_LABEL[status]}
-        </p>
+      <header className="station-head">
+        <div className="station-head__line">
+          <Code course={course} size="lg" />
+          <span>
+            <StatusMark s={markOf(status)} label />
+          </span>
+        </div>
+        <h1 className="title">{course.title}</h1>
         {note?.summary && (
-          <p className="course-summary">
+          <p className="lede">
             <Inline text={note.summary} />
           </p>
         )}
-        <div className="chips">
-          <TrackChip course={course} />
-          {note?.keywords.map((k) => (
-            <span key={k} className="chip">
-              {k}
-            </span>
-          ))}
-        </div>
+        <dl className="station-times">
+          <div>
+            <dt>출발</dt>
+            <dd className="num">
+              <span className="fig">{dot(first)}</span> {weekday(first)}
+            </dd>
+          </div>
+          <div>
+            <dt>도착</dt>
+            <dd className="num">
+              <span className="fig">{dot(last)}</span> {weekday(last)}
+            </dd>
+          </div>
+          <div>
+            <dt>수업</dt>
+            <dd className="num">
+              <span className="fig">{course.days.length}</span>일{course.hours ? ` · ${course.hours}` : ''}
+            </dd>
+          </div>
+          {course.instructors.length > 0 && (
+            <div>
+              <dt>강사</dt>
+              <dd>{course.instructors.join(' · ')}</dd>
+            </div>
+          )}
+        </dl>
+        {note?.keywords.length ? (
+          <div className="tags kw">
+            {note.keywords.map((k) => (
+              <span key={k} className="tag">
+                {k}
+              </span>
+            ))}
+          </div>
+        ) : null}
       </header>
 
       {!note && !concepts.length ? (
-        <div className="grid12" style={{ marginTop: 32, alignItems: 'start' }}>
-          <div className="span-8">
-            <section className="pending" style={{ marginTop: 0 }}>
-              <h2>아직 정리 전인 과목이에요</h2>
+        <div className="split sec">
+          <div>
+            <section className="notice">
+              <h2>
+                <StatusMark s={markOf(status)} /> 아직 정리 전인 역이에요
+              </h2>
               <p>
                 {status === 'upcoming'
-                  ? `${md(course.days[0])}에 시작하는 수업이에요. 수업이 끝나고 슬라이드와 실습 노트북을 올리면 이 자리에 개념 노트가 채워져요.`
+                  ? `${md(first)}에 출발하는 수업이에요. 수업이 끝나고 슬라이드와 실습 노트북을 올리면 이 자리에 개념 노트가 채워져요.`
                   : '이 수업의 슬라이드나 실습 노트북을 올리면 개념 노트와 면접 질문으로 정리해서 이 자리에 채워요.'}
               </p>
             </section>
-            {sameTrack.length > 0 && (
-              <section className="section" style={{ marginTop: 32 }} aria-labelledby="same-title">
-                <h2 className="section__title" id="same-title">
-                  같은 분야에서 먼저 정리한 과목
-                </h2>
-                <div className="recent-list">
-                  {sameTrack.map((c) => (
-                    <a key={c.id} className="row-card" href={courseHref(c.id)}>
-                      <span className="row-card__title">{c.title}</span>
-                      <span className="row-card__sub">
+            {sameLine.length > 0 && (
+              <section className="sec" aria-labelledby="same-title">
+                <div className="sec__head">
+                  <h2 className="sec__title" id="same-title">
+                    같은 노선에서 정리한 역
+                  </h2>
+                </div>
+                <div className="list">
+                  {sameLine.map((c) => (
+                    <a key={c.id} className="list__row" href={courseHref(c.id)}>
+                      <Code course={c} />
+                      <span className="list__title">{c.title}</span>
+                      <span className="list__sub">
                         <Inline text={noteOf(c.id)?.summary ?? ''} />
                       </span>
-                      <span className="row-card__side num">
-                        {md(c.days[0])}
-                        <br />
-                        개념 {conceptsOf(c.id).length}
-                      </span>
+                      <span className="list__side num">개념 {conceptsOf(c.id).length}</span>
                     </a>
                   ))}
                 </div>
               </section>
             )}
           </div>
-          <aside className="span-4 rail" aria-label="과목 정보">
-            <section className="panel">
-              <div className="panel__head">
-                <h2 className="panel__title">수업일</h2>
-                <span className="panel__count num">{course.days.length}일</span>
-              </div>
-              <ol className="day-list">
-                {course.days.map((d, i) => (
-                  <li key={d} className="num">
-                    <span className="day-n">Day {i + 1}</span>
-                    <time dateTime={d}>{md(d)}</time>
-                    {d === today && <span className="day-today">오늘</span>}
-                  </li>
-                ))}
-              </ol>
-            </section>
-          </aside>
+          <aside className="split__side">{days}</aside>
         </div>
       ) : (
-        <div className="grid12" style={{ marginTop: 40, alignItems: 'start' }}>
-          <div className="span-8">
-            <section aria-labelledby="concepts-title">
-              <h2 className="section__title" id="concepts-title">
-                개념 {concepts.length}개 <span className="panel__count">수업 순서대로</span>
-              </h2>
-              <ol className="concept-list">
-                {concepts.map((c) => (
+        <div className="split sec">
+          <div>
+            <section aria-labelledby="stops-title">
+              <div className="sec__head" style={{ borderTop: 0, paddingTop: 0 }}>
+                <h2 className="sec__title" id="stops-title">
+                  정차 개념 <span className="num">{concepts.length}</span>
+                </h2>
+                <span className="sec__note">수업 순서대로</span>
+              </div>
+              <ol className="stops">
+                {concepts.map((c, i) => (
                   <li key={c.slug}>
-                    <a className="concept-row" href={conceptHref(c)}>
-                      <span className="concept-row__title">
+                    <a href={conceptHref(c)}>
+                      <span className="stops__no">{String(i + 1).padStart(2, '0')}</span>
+                      <span className="stops__title">
                         {c.title}
                         {c.en && c.en !== c.title && <small>{c.en}</small>}
                       </span>
-                      <span className="concept-row__sum">
+                      <span className="stops__sum">
                         <Inline text={c.summary} />
                       </span>
-                      <span className="concept-row__side">
+                      <span className="stops__side">
                         <Importance level={c.importance} />
                         <span className="num">질문 {c.qa.length}</span>
                       </span>
@@ -131,68 +170,57 @@ export function CoursePage({ id }: { id: string }) {
             </section>
 
             {note?.body && (
-              <section className="section">
+              <section className="sec">
                 <Markdown source={note.body} />
               </section>
             )}
           </div>
 
-          <aside className="span-4 rail" aria-label="과목 정보">
-            <section className="panel">
-              <div className="panel__head">
-                <h2 className="panel__title">수업일</h2>
-                <span className="panel__count num">{course.days.length}일</span>
-              </div>
-              <ol className="day-list">
-                {course.days.map((d, i) => (
-                  <li key={d} className="num">
-                    <span className="day-n">Day {i + 1}</span>
-                    <time dateTime={d}>{md(d)}</time>
-                    {d === today && <span className="day-today">오늘</span>}
-                  </li>
-                ))}
-              </ol>
-            </section>
-
-            <section className="panel">
-              <div className="panel__head">
-                <h2 className="panel__title">수업 자료</h2>
-                <span className="panel__count num">{note?.materials.length ?? 0}개</span>
-              </div>
+          <aside className="split__side" aria-label="역 정보">
+            {qaCount > 0 && (
+              <a className="btn btn--go" href={`#/interview?course=${id}`}>
+                이 역의 면접 질문 {qaCount}개 풀기
+              </a>
+            )}
+            {days}
+            <section aria-labelledby="mats-title">
+              <h2 className="side-block__title" id="mats-title">
+                수업 자료 <span className="num">{note?.materials.length ?? 0}개</span>
+              </h2>
               {note?.materials.length ? (
-                <div className="mat-list">
+                <div className="mats">
                   {note.materials.map((m) => (
                     <MaterialLink key={m.file} m={m} />
                   ))}
                 </div>
               ) : (
-                <p className="empty">올라온 자료가 없어요.</p>
+                <p className="empty" style={{ marginTop: 12 }}>
+                  올라온 자료가 없어요.
+                </p>
               )}
             </section>
-
-            {qaCount > 0 && (
-              <a className="btn btn--primary" href={`#/interview?course=${id}`} style={{ alignSelf: 'flex-start' }}>
-                이 과목 면접 질문 {qaCount}개 풀기
-              </a>
-            )}
           </aside>
         </div>
       )}
 
-      <nav className="pager" aria-label="이전 다음 과목">
+      <nav className="pager" aria-label="이전 다음 역">
         {prev && (
           <a href={courseHref(prev.id)} data-dir="prev">
-            <small>이전 과목 · {md(prev.days[0])}</small>
+            <small className="num">
+              ← 이전 역 {stationCode(prev.id)} · {dot(prev.days[0])}
+            </small>
             <span>{prev.title}</span>
           </a>
         )}
         {next && (
           <a href={courseHref(next.id)} data-dir="next">
-            <small>다음 과목 · {md(next.days[0])}</small>
+            <small className="num">
+              다음 역 {stationCode(next.id)} · {dot(next.days[0])} →
+            </small>
             <span>{next.title}</span>
           </a>
         )}
       </nav>
-    </div>
+    </>
   )
 }
