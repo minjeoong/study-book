@@ -30,8 +30,14 @@ export interface Material {
   title: string
   type: MaterialType
   date?: string
+  /** 저장소 public/ 기준 경로 (GitHub 링크용) */
+  path: string
+  /** 브라우저가 실제로 불러올 주소 */
   url: string
 }
+
+// 자료를 사이트와 따로 두는 배포(Vercel)에서는 VITE_MATERIALS_BASE 로 GitHub 원본 주소를 받는다
+const MATERIALS_BASE: string = import.meta.env.VITE_MATERIALS_BASE ?? ''
 
 export interface CourseNote {
   course: string
@@ -75,13 +81,15 @@ for (const [path, raw] of Object.entries(files)) {
     const materials = (Array.isArray(data.materials) ? data.materials : []).map((x) => {
       const it = x as Record<string, unknown>
       const file = str(it.file)
+      const path = `materials/${course}/${file}`
       return {
         course,
         file,
         title: str(it.title, file),
         type: (str(it.type, 'etc') as MaterialType),
         date: it.date ? normalizeDate(it.date) : undefined,
-        url: `materials/${course}/${file}`,
+        path,
+        url: MATERIALS_BASE + path,
       }
     })
     notesByCourse.set(course, {

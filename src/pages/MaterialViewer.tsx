@@ -39,7 +39,7 @@ export function MaterialViewer({ course: courseId, file, page }: { course: strin
             <span>{file}</span>
           </p>
         </div>
-        <a className="btn btn--line btn--sm" href={REPO_BLOB + mat.url} target="_blank" rel="noreferrer">
+        <a className="btn btn--line btn--sm" href={REPO_BLOB + mat.path} target="_blank" rel="noreferrer">
           GitHub에서 원본 보기
         </a>
       </header>
@@ -100,7 +100,7 @@ function LoadError({ m, what }: { m: Material; what: string }) {
       <h2>{what}을 불러오지 못했어요</h2>
       <p>
         이 화면에서 파일을 읽지 못했어요. GitHub 저장소에 원본이 그대로 있으니{' '}
-        <a className="source__link" href={REPO_BLOB + m.url} target="_blank" rel="noreferrer">
+        <a className="source__link" href={REPO_BLOB + m.path} target="_blank" rel="noreferrer">
           GitHub에서 열어 보세요
         </a>
         .
@@ -445,7 +445,7 @@ function OfficeView({ m, ext }: { m: Material; ext: string }) {
         <a className="btn btn--go btn--sm" href={m.url} download={m.file}>
           파일 내려받기
         </a>
-        <a className="btn btn--line btn--sm" href={REPO_BLOB + m.url} target="_blank" rel="noreferrer">
+        <a className="btn btn--line btn--sm" href={REPO_BLOB + m.path} target="_blank" rel="noreferrer">
           GitHub에서 보기
         </a>
       </p>

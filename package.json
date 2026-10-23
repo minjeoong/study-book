@@ -8,7 +8,8 @@
     "check": "node scripts/check-content.mjs",
     "build": "node scripts/check-content.mjs && tsc --noEmit && vite build",
     "preview": "vite preview",
-    "build:artifact": "npm run build && node scripts/artifact.mjs"
+    "build:artifact": "npm run build && node scripts/artifact.mjs",
+    "build:vercel": "VITE_MATERIALS_BASE=https://raw.githubusercontent.com/minjeoong/study-book/HEAD/public/ npm run build && rm -rf dist/materials"
   },
   "dependencies": {
     "highlight.js": "^11.10.0",
